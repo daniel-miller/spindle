@@ -1,0 +1,6 @@
+﻿namespace $Namespace;
+
+public partial class $ClassName
+{
+$ClassProperties
+}

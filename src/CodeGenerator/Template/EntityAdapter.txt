@@ -1,0 +1,58 @@
+﻿using Shift.Common;
+using Shift.Contract;
+
+namespace $ServiceNamespace;
+
+public class $EntityNameAdapter : IEntityAdapter
+{
+    public void Copy(Modify$EntityName modify, $EntityNameEntity entity)
+    {
+$AssignModifyToEntity
+    }
+
+    public string Serialize<T>(IEnumerable<T> models, string format, string includes)
+    {
+        return format.ToLower() == "csv"
+            ? CsvHelper.SerializeCsv(models, includes)
+            : JsonHelper.SerializeJson(models, includes);
+    }
+
+    public $EntityNameEntity ToEntity(Create$EntityName create)
+    {
+        var entity = new $EntityNameEntity
+        {
+$AssignCreateToEntity
+        };
+        return entity;
+    }
+
+    public IEnumerable<$EntityNameModel> ToModel(IEnumerable<$EntityNameEntity> entities)
+    {
+        return entities.Select(ToModel);
+    }
+
+    public $EntityNameModel ToModel($EntityNameEntity entity)
+    {
+        var model = new $EntityNameModel
+        {
+$AssignEntityToModel
+        };
+
+        return model;
+    }
+
+    public IEnumerable<$EntityNameMatch> ToMatch(IEnumerable<$EntityNameEntity> entities)
+    {
+        return entities.Select(ToMatch);
+    }
+
+    public $EntityNameMatch ToMatch($EntityNameEntity entity)
+    {
+        var match = new $EntityNameMatch
+        {
+$AssignEntityToMatch
+        };
+
+        return match;
+    }
+}

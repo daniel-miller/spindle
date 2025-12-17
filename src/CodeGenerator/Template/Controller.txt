@@ -1,0 +1,248 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+using $ServiceNamespace;
+
+namespace $ApiNamespace;
+
+[ApiController]
+[ApiExplorerSettings(GroupName = $SwaggerHeading)]
+public class $EntityNameController : ShiftControllerBase
+{
+    private readonly $EntityNameService _$EntityNameVariableService;
+
+    public $EntityNameController($EntityNameService $EntityNameVariableService)
+    {
+        _$EntityNameVariableService = $EntityNameVariableService;
+    }
+
+    #region Queries
+
+    /// <summary>
+    /// Checks for the existence of one specific $EntityLabel
+    /// </summary>
+    [HttpHead("$CollectionPath/$CollectionKey")]
+    [HybridAuthorize($EntityPolicy.Assert)]
+    [ProducesResponseType<bool>(StatusCodes.Status200OK)]
+    [EndpointName("assert$EntityName")]
+    public async Task<IActionResult> AssertAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
+    {
+        var exists = await _$EntityNameVariableService.AssertAsync($PrimaryKeyMethodArguments, cancellation);
+
+        return exists ? Ok() : NotFound();
+    }
+
+    /// <summary>
+    /// Collects the list of $EntityLabelPlural that match specific criteria
+    /// </summary>
+    [HttpPost("$CollectionPath/collect")]
+    [HybridAuthorize($EntityPolicy.Collect)]
+    [ProducesResponseType<IEnumerable<$EntityNameModel>>(StatusCodes.Status200OK)]
+    [EndpointName("collect$EntityNamePlural")]
+    public async Task<IActionResult> PostCollectAsync([FromBody] Collect$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await CollectAsync(query, cancellation);
+    }
+
+    [HttpGet("$CollectionPath")]
+    [HybridAuthorize($EntityPolicy.Collect)]
+    [ProducesResponseType<IEnumerable<$EntityNameModel>>(StatusCodes.Status200OK)]
+    [EndpointName("collect$EntityNamePlural_get")]
+    [AliasFor("collect$EntityNamePlural")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IActionResult> GetCollectAsync([FromQuery] Collect$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await CollectAsync(query, cancellation);
+    }
+
+    private async Task<IActionResult> CollectAsync(Collect$EntityNamePlural query, CancellationToken cancellation)
+    {
+        var models = await _$EntityNameVariableService.CollectAsync(query, cancellation);
+
+        var count = await _$EntityNameVariableService.CountAsync(query, cancellation);
+
+        Response.AddPagination(query.Filter, count);
+
+        return Ok(models);
+    }
+
+    /// <summary>
+    /// Counts the $EntityLabelPlural that match specific criteria
+    /// </summary>
+    [HttpPost("$CollectionPath/count")]
+    [HybridAuthorize($EntityPolicy.Count)]
+    [ProducesResponseType<CountResult>(StatusCodes.Status200OK)]
+    [EndpointName("count$EntityNamePlural")]
+    public async Task<IActionResult> PostCountAsync([FromBody] Count$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await CountAsync(query, cancellation);
+    }
+
+    [HttpGet("$CollectionPath/count")]
+    [HybridAuthorize($EntityPolicy.Count)]
+    [ProducesResponseType<CountResult>(StatusCodes.Status200OK)]
+    [EndpointName("count$EntityNamePlural_get")]
+    [AliasFor("count$EntityNamePlural")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IActionResult> GetCountAsync([FromQuery] Count$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await CountAsync(query, cancellation);
+    }
+
+    private async Task<IActionResult> CountAsync(Count$EntityNamePlural query, CancellationToken cancellation)
+    {
+        var count = await _$EntityNameVariableService.CountAsync(query, cancellation);
+
+        return Ok(new CountResult(count));
+    }
+
+    /// <summary>
+    /// Downloads the list of $EntityLabelPlural that match specific criteria
+    /// </summary>    
+    [HttpPost("$CollectionPath/download")]
+    [HybridAuthorize($EntityPolicy.Download)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [Produces("application/octet-stream")]
+    [EndpointName("download$EntityNamePlural")]
+    public async Task<FileContentResult> PostDownloadAsync([FromBody] Collect$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await DownloadAsync(query, cancellation);
+    }
+
+    [HttpGet("$CollectionPath/download")]
+    [HybridAuthorize($EntityPolicy.Download)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [Produces("application/octet-stream")]
+    [EndpointName("download$EntityNamePlural_get")]
+    [AliasFor("download$EntityNamePlural")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<FileContentResult> GetDownloadAsync([FromQuery] Collect$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await DownloadAsync(query, cancellation);
+    }
+
+    private async Task<FileContentResult> DownloadAsync(Collect$EntityNamePlural query, CancellationToken cancellation)
+    {
+        var exporter = new ExportHelper("$ComponentName", "$EntityNamePlural", query.Filter.Format, User);
+
+        var models = await _$EntityNameVariableService
+            .DownloadAsync(query, cancellation)
+            .ToListAsync(cancellation);
+
+        var content = _$EntityNameVariableService.Serialize(models, exporter.GetFileFormat(), query.Filter.Includes);
+
+        var contentBytes = System.Text.Encoding.UTF8.GetBytes(content);
+
+        var fileName = exporter.CreateFileName();
+
+        var contentType = exporter.GetContentType(fileName);
+
+        return File(contentBytes, contentType, fileName);
+    }
+
+    /// <summary>
+    /// Retrieves one specific $EntityLabel
+    /// </summary>
+    [HttpGet("$CollectionPath/$CollectionKey")]
+    [HybridAuthorize($EntityPolicy.Retrieve)]
+    [ProducesResponseType<$EntityNameModel>(StatusCodes.Status200OK)]
+    [EndpointName("retrieve$EntityName")]
+    public async Task<IActionResult> RetrieveAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
+    {
+        var model = await _$EntityNameVariableService.RetrieveAsync($PrimaryKeyMethodArguments, cancellation);
+
+        return model != null ? Ok(model) : NotFound();
+    }
+
+    /// <summary>
+    /// Searches for the list of $EntityLabelPlural that match specific criteria
+    /// </summary>
+    [HttpPost("$CollectionPath/search")]
+    [HybridAuthorize($EntityPolicy.Search)]
+    [ProducesResponseType<IEnumerable<$EntityNameMatch>>(StatusCodes.Status200OK)]
+    [EndpointName("search$EntityNamePlural")]
+    public async Task<IActionResult> PostSearchAsync([FromBody] Search$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await SearchAsync(query, cancellation);
+    }
+
+    [HttpGet("$CollectionPath/search")]
+    [HybridAuthorize($EntityPolicy.Search)]
+    [ProducesResponseType<IEnumerable<$EntityNameMatch>>(StatusCodes.Status200OK)]
+    [EndpointName("search$EntityNamePlural_get")]
+    [AliasFor("search$EntityNamePlural")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IActionResult> GetSearchAsync([FromQuery] Search$EntityNamePlural query, CancellationToken cancellation = default)
+    {
+        return await SearchAsync(query, cancellation);
+    }
+
+    private async Task<IActionResult> SearchAsync(Search$EntityNamePlural query, CancellationToken cancellation)
+    {
+        var matches = await _$EntityNameVariableService.SearchAsync(query, cancellation);
+
+        var count = await _$EntityNameVariableService.CountAsync(query, cancellation);
+
+        Response.AddPagination(query.Filter, count);
+
+        return Ok(matches);
+    }
+
+    #endregion Queries
+
+    #region Commands
+
+    [HttpPost("$CollectionPath")]
+    [HybridAuthorize($EntityPolicy.Create)]
+    [ProducesResponseType<$EntityNameModel>(StatusCodes.Status201Created, "application/json")]
+    [ProducesResponseType<ValidationFailure>(StatusCodes.Status400BadRequest, "application/json")]
+    [EndpointName("create$EntityName")]
+    public async Task<IActionResult> CreateAsync([FromBody] Create$EntityName create, CancellationToken cancellation = default)
+    {
+        var created = await _$EntityNameVariableService.CreateAsync(create, cancellation);
+
+        if (!created)
+            return BadRequest($"Duplicate not permitted: $PrimaryKeyValuesForCreate. You cannot insert a duplicate object with the same primary key.");
+
+        var model = await _$EntityNameVariableService.RetrieveAsync($PrimaryKeyValuesForCreateRetrieve, cancellation);
+
+        return CreatedAtAction(nameof(CreateAsync), model);
+    }
+
+    [HttpDelete("$CollectionPath/$CollectionKey")]
+    [HybridAuthorize($EntityPolicy.Delete)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [EndpointName("delete$EntityName")]
+    public async Task<IActionResult> DeleteAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
+    {
+        var deleted = await _$EntityNameVariableService.DeleteAsync($PrimaryKeyMethodArguments, cancellation);
+        
+        if (!deleted)
+            return NotFound();
+        
+        return Ok();
+    }
+
+    [HttpPut("$CollectionPath/$CollectionKey")]
+    [HybridAuthorize($EntityPolicy.Modify)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ValidationFailure>(StatusCodes.Status400BadRequest, "application/json")]
+    [EndpointName("modify$EntityName")]
+    public async Task<IActionResult> ModifyAsync($PrimaryKeyMethodParameters, [FromBody] Modify$EntityName modify, CancellationToken cancellation = default)
+    {
+        var model = await _$EntityNameVariableService.RetrieveAsync($PrimaryKeyMethodArguments, cancellation);
+
+        if (model is null)
+            return NotFound($"$EntityName not found: $PrimaryKeyValuesForModify. You cannot modify an object that is not in the database.");
+
+        var modified = await _$EntityNameVariableService.ModifyAsync(modify, cancellation);
+
+        if (!modified)
+            return NotFound();
+        
+        return Ok();
+    }
+
+    #endregion Commands
+}

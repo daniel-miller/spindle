@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+
+using Shift.Common;
+
+namespace $Namespace
+{
+    public class Collect$EntityNamePlural : Query<IEnumerable<$EntityNameModel>>, I$EntityNameCriteria
+    {
+$MultipleItemProperties
+    }
+}

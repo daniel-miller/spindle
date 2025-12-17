@@ -1,0 +1,13 @@
+﻿using System;
+
+using Shift.Common;
+
+namespace $Namespace
+{
+    public interface I$EntityNameCriteria
+    {
+        QueryFilter Filter { get; set; }
+        
+$MultipleItemPropertiesForInterface
+    }
+}

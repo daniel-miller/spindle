@@ -1,0 +1,54 @@
+﻿using Microsoft.EntityFrameworkCore;
+
+using Shift.Common;
+
+namespace $ServiceNamespace;
+
+public class $EntityNameWriter : IEntityWriter
+{
+    private readonly IDbContextFactory<$StorageStructureDbContext> _context;
+
+    public $EntityNameWriter(IDbContextFactory<$StorageStructureDbContext> context)
+    {
+        _context = context;
+    }
+
+    public async Task<bool> CreateAsync($EntityNameEntity entity, CancellationToken cancellation = default)
+    {
+        using var db = _context.CreateDbContext();
+
+        var exists = await AssertAsync($PrimaryKeyPropertyNames, cancellation, db);
+        if (exists)
+            return false;
+                
+        await db.$EntityName.AddAsync(entity, cancellation);
+        return await db.SaveChangesAsync(cancellation) > 0;
+    }
+        
+    public async Task<bool> DeleteAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
+    {
+        using var db = _context.CreateDbContext();
+
+        var entity = await db.$EntityName.SingleOrDefaultAsync(x => $PrimaryKeyEqualityExpression, cancellation);
+        if (entity == null)
+            return false;
+
+        db.$EntityName.Remove(entity);
+        return await db.SaveChangesAsync(cancellation) > 0;
+    }
+        
+    public async Task<bool> ModifyAsync($EntityNameEntity entity, CancellationToken cancellation = default)
+    {
+        using var db = _context.CreateDbContext();
+
+        var exists = await AssertAsync($PrimaryKeyPropertyNames, cancellation, db);
+        if (!exists)
+            return false;
+
+        db.Entry(entity).State = EntityState.Modified;
+        return await db.SaveChangesAsync(cancellation) > 0;
+    }
+
+    private async Task<bool> AssertAsync($PrimaryKeyMethodParameters, CancellationToken cancellation, $StorageStructureDbContext db)
+		=> await db.$EntityName.AsNoTracking().AnyAsync(x => $PrimaryKeyEqualityExpression, cancellation);
+}

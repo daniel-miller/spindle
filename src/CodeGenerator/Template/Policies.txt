@@ -1,0 +1,23 @@
+﻿namespace $Namespace
+{
+    ///<summary>
+    /// Defines authorization policies for every entity
+    /// </summary>
+    /// <remarks>
+    /// ## Queries
+    /// - Assert = **HEAD**: Check for the existence of a single item
+    /// - Retrieve = **GET**:  Retrieve a single item
+    /// - Collect = **GET or POST**: Retrieve multiple items that match criteria (paging enabled)
+    /// - Count = **GET or POST**: Count the number of items that match criteria
+    /// - Download = **GET or POST**: Retrieve multiple items that match criteria (paging disabled)
+    /// - Search = **GET or POST**: Find multiple items that match criteria (paging enabled)
+    /// ## Commands
+    /// - Create = **POST**: Insert a single item
+    /// - Delete = **DELETE**: Delete a single item
+    /// - Modify = **PUT**: Update a single item
+    /// </remarks>
+    public static partial class Policies
+    {
+$Policies
+    }
+}

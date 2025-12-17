@@ -1,0 +1,15 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace $Namespace;
+
+public class $EntityNameConfiguration : IEntityTypeConfiguration<$EntityNameEntity>
+{
+    public void Configure(EntityTypeBuilder<$EntityNameEntity> builder) 
+    {
+        builder.ToTable("$StorageTable", "$StorageSchema");
+        builder.HasKey(x => new { $PrimaryKeyColumnNames });
+            
+$ColumnSpecifications
+    }
+}

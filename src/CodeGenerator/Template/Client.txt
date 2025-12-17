@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Tek.Base;
+
+namespace $ContractNamespace
+{
+    public class $EntityNameClient
+    {
+        // Queries
+
+        public async Task<ApiResult<bool>> AssertAsync(ApiClient api, $PrimaryKeyMethodParameters)
+            => await api.Assert($ApiRoute.Assert, $PrimaryKeyMethodArguments);
+
+        public async Task<ApiResult<$EntityNameModel>> RetrieveAsync(ApiClient api, $PrimaryKeyMethodParameters)
+            => await api.HttpGet<$EntityNameModel>($ApiRoute.Retrieve, $PrimaryKeyMethodArguments);
+
+        public async Task<ApiResult<int>> CountAsync(ApiClient api, Count$EntityNamePlural count)
+            => await api.Count($ApiRoute.Count, api.ToDictionary(count));
+
+        public async Task<ApiResult<IEnumerable<$EntityNameModel>>> CollectAsync(ApiClient api, Collect$EntityNamePlural collect)
+            => await api.HttpGet<IEnumerable<$EntityNameModel>>($ApiRoute.Collect, null, api.ToDictionary(collect));
+
+        public async Task<ApiResult<IEnumerable<$EntityNameMatch>>> SearchAsync(ApiClient api, Search$EntityNamePlural search)
+            => await api.HttpGet<IEnumerable<$EntityNameMatch>>($ApiRoute.Search, null, api.ToDictionary(search));
+
+        // Commands
+
+        public async Task<ApiResult> CreateAsync(ApiClient api, Create$EntityName create)
+            => await api.HttpPost($ApiRoute.Create, create);
+
+        public async Task<ApiResult> ModifyAsync(ApiClient api, Modify$EntityName modify)
+            => await api.HttpPut($ApiRoute.Modify, $PrimaryKeyValuesForModify, modify);
+
+        public async Task<ApiResult> DeleteAsync(ApiClient api, Delete$EntityName delete)
+            => await api.HttpDelete($ApiRoute.Delete, $PrimaryKeyValuesForDelete);            
+    }   
+}

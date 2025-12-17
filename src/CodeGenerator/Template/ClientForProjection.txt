@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Tek.Base;
+
+namespace $ContractNamespace
+{
+    public class $EntityNameClient
+    {
+        // Queries
+
+        public async Task<ApiResult<bool>> AssertAsync(ApiClient api, $PrimaryKeyMethodParameters)
+            => await api.Assert($ApiRoute.Assert, $PrimaryKeyMethodArguments);
+
+        public async Task<ApiResult<$EntityNameModel>> RetrieveAsync(ApiClient api, $PrimaryKeyMethodParameters)
+            => await api.HttpGet<$EntityNameModel>($ApiRoute.Retrieve, $PrimaryKeyMethodArguments);
+
+        public async Task<ApiResult<int>> CountAsync(ApiClient api, Count$EntityNamePlural count)
+            => await api.Count($ApiRoute.Count, api.ToDictionary(count));
+
+        public async Task<ApiResult<IEnumerable<$EntityNameModel>>> CollectAsync(ApiClient api, Collect$EntityNamePlural collect)
+            => await api.HttpGet<IEnumerable<$EntityNameModel>>($ApiRoute.Collect, null, api.ToDictionary(collect));
+
+        public async Task<ApiResult<IEnumerable<$EntityNameMatch>>> SearchAsync(ApiClient api, Search$EntityNamePlural search)
+            => await api.HttpGet<IEnumerable<$EntityNameMatch>>($ApiRoute.Search, null, api.ToDictionary(search));
+
+        // Commands
+
+        // Modification of data in this Projection is permitted only using Timeline commands.
+    }   
+}

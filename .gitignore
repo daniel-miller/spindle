@@ -1,0 +1,29 @@
+# Build outputs
+*.log
+*.obj
+*.pdb
+[Bb]in/
+[Dd]ebug/
+[Dd]ist/
+[Oo]bj/
+[Rr]elease/
+[Rr]eleases/
+
+# Local development settings
+appsettings.local.json
+
+# Node.js
+node_modules/
+
+# NuGet packages
+*.nupkg
+**/[Pp]ackages/
+
+# Temporary files
+[Tt]emp/
+[Tt]mp/
+
+# Visual Studio and VS Code
+.idea/
+.vs/
+.vscode/

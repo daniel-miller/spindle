@@ -1,0 +1,11 @@
+﻿using System;
+
+using Shift.Common;
+
+namespace $Namespace
+{
+    public class Count$EntityNamePlural : Query<int>, I$EntityNameCriteria
+    {
+$MultipleItemProperties
+    }
+}

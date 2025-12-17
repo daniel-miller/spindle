@@ -1,0 +1,46 @@
+﻿using Microsoft.EntityFrameworkCore;
+
+$Usings
+namespace $Namespace;
+
+public class TableDbContext : DbContext
+{
+    public TableDbContext(DbContextOptions options) : base(options) { }
+
+    #region Storage Tables
+
+$DbSetProperties
+
+    #endregion
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        ApplyConfigurations(builder);
+        ApplyNavigations(builder);
+
+        var decimalProperties = builder.Model
+            .GetEntityTypes()
+            .SelectMany(t => t.GetProperties())
+            .Where(p => (Nullable.GetUnderlyingType(p.ClrType) ?? p.ClrType) == typeof(decimal));
+
+        foreach (var property in decimalProperties)
+        {
+            property.SetPrecision(18);
+            property.SetScale(2);
+        }
+    }
+
+    private void ApplyConfigurations(ModelBuilder builder)
+    {
+$DbSetConfigurations
+    }
+
+    private void ApplyNavigations(ModelBuilder builder)
+    {
+        // builder.Entity<PrimaryEntity>()
+        //     .HasMany(e => e.ForeignProperty)
+        //     .WithOne(e => e.PrimaryProperty)
+        //     .HasForeignKey(e => e.ForeignIdentifier)
+        //     .HasPrincipalKey(e => e.PrimaryIdentifier);
+    }
+}

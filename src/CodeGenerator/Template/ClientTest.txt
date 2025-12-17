@@ -1,0 +1,24 @@
+﻿using System.Net;
+
+namespace $ContractNamespace.Test;
+
+[Collection("Entity Tests")]
+[Trait("Category", "SDK")]
+public class $EntityNameClientTests
+{
+    private readonly ApiClientFixture _fixture;
+
+    public $EntityNameClientTests(ApiClientFixture fixture)
+    {
+        _fixture = fixture;
+    }
+
+    [Fact]
+    public async Task Collect_Take5_NoExceptionThrown()
+    {
+        var client = new $EntityNameClient();
+        var query = new Collect$EntityNamePlural() { Filter = new Filter { Take = 5 } };
+        var result = await client.CollectAsync(await _fixture.CreateClient(), query);
+        Assert.Equal(HttpStatusCode.OK, result.Status);
+    }
+}
