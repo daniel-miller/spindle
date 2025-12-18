@@ -2,7 +2,7 @@
 
 using Microsoft.Data.SqlClient;
 
-namespace CodeGenerator;
+namespace Spindle;
 
 public class SqlServerDatabase : IDatabase
 {

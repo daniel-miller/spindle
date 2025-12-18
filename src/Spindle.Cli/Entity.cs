@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator;
+﻿namespace Spindle;
 
 /// <summary>
 /// Represents an entity configuration for code generation with component, collection, and storage information

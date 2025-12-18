@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace CodeGenerator;
+namespace Spindle;
 
 public interface IDatabase
 {

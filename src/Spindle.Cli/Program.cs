@@ -1,4 +1,4 @@
-﻿using CodeGenerator;
+﻿using Spindle;
 
 var settings = Config.GetSettings<GeneratorSettings>("Generator");
 

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace CodeGenerator;
+namespace Spindle;
 
 /// <summary>
 /// Compares DataColumns for consistent ordering based on data type priority and column name

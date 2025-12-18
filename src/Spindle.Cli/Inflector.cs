@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CodeGenerator;
+namespace Spindle;
 
 /// <summary>
 /// Provides methods for string inflection including pluralization, casing, and word transformation

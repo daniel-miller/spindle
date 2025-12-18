@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Text;
 
-namespace CodeGenerator;
+namespace Spindle;
 
 public class Generator
 {

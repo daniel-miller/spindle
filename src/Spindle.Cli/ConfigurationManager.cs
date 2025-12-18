@@ -3,7 +3,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
-namespace CodeGenerator;
+namespace Spindle;
 
 /// <summary>
 /// Manages application configuration with support for multiple sources, caching, and environment-specific settings

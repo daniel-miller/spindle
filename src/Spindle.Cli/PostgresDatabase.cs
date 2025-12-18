@@ -2,7 +2,7 @@
 
 using Npgsql;
 
-namespace CodeGenerator;
+namespace Spindle;
 
 public class PostgresDatabase : IDatabase
 {

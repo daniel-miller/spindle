@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator;
+﻿namespace Spindle;
 
 public class GeneratorSettings
 {

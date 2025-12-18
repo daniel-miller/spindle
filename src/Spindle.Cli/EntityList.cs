@@ -1,4 +1,4 @@
-﻿namespace CodeGenerator;
+﻿namespace Spindle;
 
 /// <summary>
 /// Represents a collection of entities with specialized query methods
