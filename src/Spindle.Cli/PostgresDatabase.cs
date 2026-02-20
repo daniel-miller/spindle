@@ -243,9 +243,9 @@ public class PostgresDatabase : IDatabase
             StorageTable = reader["storage_table"] as string ?? string.Empty,
             StorageKey = reader["storage_key"] as string ?? string.Empty,
             StorageTableRename = reader["storage_table_rename"] as string,
-            ComponentType = reader["component_type"] as string ?? string.Empty,
-            ComponentName = reader["component_name"] as string ?? string.Empty,
-            ComponentPart = reader["component_part"] as string ?? string.Empty,
+            SubsystemType = reader["component_type"] as string ?? string.Empty,
+            SubsystemName = reader["component_name"] as string ?? string.Empty,
+            SubsystemComponent = reader["component_part"] as string ?? string.Empty,
             EntityName = reader["entity_name"] as string ?? string.Empty,
             CollectionSlug = reader["collection_slug"] as string ?? string.Empty,
             CollectionKey = reader["collection_key"] as string ?? string.Empty

@@ -9,10 +9,12 @@ namespace $ApiNamespace;
 public class $EntityNameController : ShiftControllerBase
 {
     private readonly $EntityNameService _$EntityNameVariableService;
+    private readonly IPrincipalProvider _principalProvider;
 
-    public $EntityNameController($EntityNameService $EntityNameVariableService)
+    public $EntityNameController($EntityNameService $EntityNameVariableService, IPrincipalProvider principalProvider)
     {
         _$EntityNameVariableService = $EntityNameVariableService;
+        _principalProvider = principalProvider;
     }
 
     #region Queries
@@ -20,13 +22,17 @@ public class $EntityNameController : ShiftControllerBase
     /// <summary>
     /// Checks for the existence of one specific $EntityLabel
     /// </summary>
-    [HttpHead("$CollectionPath/$CollectionKey")]
-    [HybridAuthorize($EntityPolicy.Assert)]
+    [HttpHead("api/$CollectionPath/$CollectionKey")]
+    [HybridPermission("$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<bool>(StatusCodes.Status200OK)]
     [EndpointName("assert$EntityName")]
     public async Task<IActionResult> AssertAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
     {
-        var exists = await _$EntityNameVariableService.AssertAsync($PrimaryKeyMethodArguments, cancellation);
+        var principal = _principalProvider.GetPrincipal();
+
+        var organizationId = _principalProvider.GetOrganizationId(principal);
+
+        var exists = await _$EntityNameVariableService.AssertAsync($PrimaryKeyMethodArguments, organizationId, cancellation);
 
         return exists ? Ok() : NotFound();
     }
@@ -35,7 +41,7 @@ public class $EntityNameController : ShiftControllerBase
     /// Collects the list of $EntityLabelPlural that match specific criteria
     /// </summary>
     [HttpPost("$CollectionPath/collect")]
-    [HybridAuthorize($EntityPolicy.Collect)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<IEnumerable<$EntityNameModel>>(StatusCodes.Status200OK)]
     [EndpointName("collect$EntityNamePlural")]
     public async Task<IActionResult> PostCollectAsync([FromBody] Collect$EntityNamePlural query, CancellationToken cancellation = default)
@@ -44,7 +50,7 @@ public class $EntityNameController : ShiftControllerBase
     }
 
     [HttpGet("$CollectionPath")]
-    [HybridAuthorize($EntityPolicy.Collect)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<IEnumerable<$EntityNameModel>>(StatusCodes.Status200OK)]
     [EndpointName("collect$EntityNamePlural_get")]
     [AliasFor("collect$EntityNamePlural")]
@@ -56,7 +62,11 @@ public class $EntityNameController : ShiftControllerBase
 
     private async Task<IActionResult> CollectAsync(Collect$EntityNamePlural query, CancellationToken cancellation)
     {
-        var models = await _$EntityNameVariableService.CollectAsync(query, cancellation);
+        var principal = _principalProvider.GetPrincipal();
+
+        _principalProvider.ValidateOrganizationId(principal, query);
+
+        var models = await _$EntityNameVariableService.CollectAsync(query, principal.TimeZone, cancellation);
 
         var count = await _$EntityNameVariableService.CountAsync(query, cancellation);
 
@@ -69,7 +79,7 @@ public class $EntityNameController : ShiftControllerBase
     /// Counts the $EntityLabelPlural that match specific criteria
     /// </summary>
     [HttpPost("$CollectionPath/count")]
-    [HybridAuthorize($EntityPolicy.Count)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<CountResult>(StatusCodes.Status200OK)]
     [EndpointName("count$EntityNamePlural")]
     public async Task<IActionResult> PostCountAsync([FromBody] Count$EntityNamePlural query, CancellationToken cancellation = default)
@@ -78,7 +88,7 @@ public class $EntityNameController : ShiftControllerBase
     }
 
     [HttpGet("$CollectionPath/count")]
-    [HybridAuthorize($EntityPolicy.Count)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<CountResult>(StatusCodes.Status200OK)]
     [EndpointName("count$EntityNamePlural_get")]
     [AliasFor("count$EntityNamePlural")]
@@ -90,6 +100,10 @@ public class $EntityNameController : ShiftControllerBase
 
     private async Task<IActionResult> CountAsync(Count$EntityNamePlural query, CancellationToken cancellation)
     {
+        var principal = _principalProvider.GetPrincipal();
+
+        _principalProvider.ValidateOrganizationId(principal, query);
+
         var count = await _$EntityNameVariableService.CountAsync(query, cancellation);
 
         return Ok(new CountResult(count));
@@ -99,7 +113,7 @@ public class $EntityNameController : ShiftControllerBase
     /// Downloads the list of $EntityLabelPlural that match specific criteria
     /// </summary>    
     [HttpPost("$CollectionPath/download")]
-    [HybridAuthorize($EntityPolicy.Download)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [Produces("application/octet-stream")]
     [EndpointName("download$EntityNamePlural")]
@@ -109,7 +123,7 @@ public class $EntityNameController : ShiftControllerBase
     }
 
     [HttpGet("$CollectionPath/download")]
-    [HybridAuthorize($EntityPolicy.Download)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [Produces("application/octet-stream")]
     [EndpointName("download$EntityNamePlural_get")]
@@ -122,10 +136,14 @@ public class $EntityNameController : ShiftControllerBase
 
     private async Task<FileContentResult> DownloadAsync(Collect$EntityNamePlural query, CancellationToken cancellation)
     {
-        var exporter = new ExportHelper("$ComponentName", "$EntityNamePlural", query.Filter.Format, User);
+        var principal = _principalProvider.GetPrincipal();
+
+        _principalProvider.ValidateOrganizationId(principal, query);
+
+        var exporter = new ExportHelper("$SubsystemName", "$EntityNamePlural", query.Filter.Format, User);
 
         var models = await _$EntityNameVariableService
-            .DownloadAsync(query, cancellation)
+            .DownloadAsync(query, principal.TimeZone, cancellation)
             .ToListAsync(cancellation);
 
         var content = _$EntityNameVariableService.Serialize(models, exporter.GetFileFormat(), query.Filter.Includes);
@@ -143,21 +161,29 @@ public class $EntityNameController : ShiftControllerBase
     /// Retrieves one specific $EntityLabel
     /// </summary>
     [HttpGet("$CollectionPath/$CollectionKey")]
-    [HybridAuthorize($EntityPolicy.Retrieve)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<$EntityNameModel>(StatusCodes.Status200OK)]
     [EndpointName("retrieve$EntityName")]
     public async Task<IActionResult> RetrieveAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
     {
-        var model = await _$EntityNameVariableService.RetrieveAsync($PrimaryKeyMethodArguments, cancellation);
+        var principal = _principalProvider.GetPrincipal();
 
-        return model != null ? Ok(model) : NotFound();
+        var model = await _$EntityNameVariableService.RetrieveAsync($PrimaryKeyMethodArguments, principal.TimeZone, cancellation);
+
+        if (model == null)
+            return NotFound();
+
+        if (!_principalProvider.AllowOrganizationAccess(principal, model.OrganizationId))
+            return NotFound();
+
+        return Ok(model);
     }
 
     /// <summary>
     /// Searches for the list of $EntityLabelPlural that match specific criteria
     /// </summary>
     [HttpPost("$CollectionPath/search")]
-    [HybridAuthorize($EntityPolicy.Search)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<IEnumerable<$EntityNameMatch>>(StatusCodes.Status200OK)]
     [EndpointName("search$EntityNamePlural")]
     public async Task<IActionResult> PostSearchAsync([FromBody] Search$EntityNamePlural query, CancellationToken cancellation = default)
@@ -166,7 +192,7 @@ public class $EntityNameController : ShiftControllerBase
     }
 
     [HttpGet("$CollectionPath/search")]
-    [HybridAuthorize($EntityPolicy.Search)]
+    [HybridPermission("api/$CollectionPath", DataAccess.Read)]
     [ProducesResponseType<IEnumerable<$EntityNameMatch>>(StatusCodes.Status200OK)]
     [EndpointName("search$EntityNamePlural_get")]
     [AliasFor("search$EntityNamePlural")]
@@ -178,6 +204,10 @@ public class $EntityNameController : ShiftControllerBase
 
     private async Task<IActionResult> SearchAsync(Search$EntityNamePlural query, CancellationToken cancellation)
     {
+        var principal = _principalProvider.GetPrincipal();
+
+        _principalProvider.ValidateOrganizationId(principal, query);
+
         var matches = await _$EntityNameVariableService.SearchAsync(query, cancellation);
 
         var count = await _$EntityNameVariableService.CountAsync(query, cancellation);
@@ -192,7 +222,7 @@ public class $EntityNameController : ShiftControllerBase
     #region Commands
 
     [HttpPost("$CollectionPath")]
-    [HybridAuthorize($EntityPolicy.Create)]
+    [HybridPermission($EntityPolicy.Create)]
     [ProducesResponseType<$EntityNameModel>(StatusCodes.Status201Created, "application/json")]
     [ProducesResponseType<ValidationFailure>(StatusCodes.Status400BadRequest, "application/json")]
     [EndpointName("create$EntityName")]
@@ -209,7 +239,7 @@ public class $EntityNameController : ShiftControllerBase
     }
 
     [HttpDelete("$CollectionPath/$CollectionKey")]
-    [HybridAuthorize($EntityPolicy.Delete)]
+    [HybridPermission($EntityPolicy.Delete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [EndpointName("delete$EntityName")]
@@ -224,7 +254,7 @@ public class $EntityNameController : ShiftControllerBase
     }
 
     [HttpPut("$CollectionPath/$CollectionKey")]
-    [HybridAuthorize($EntityPolicy.Modify)]
+    [HybridPermission($EntityPolicy.Modify)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType<ValidationFailure>(StatusCodes.Status400BadRequest, "application/json")]

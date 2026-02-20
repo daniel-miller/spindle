@@ -26,12 +26,12 @@ $AssignCreateToEntity
         return entity;
     }
 
-    public IEnumerable<$EntityNameModel> ToModel(IEnumerable<$EntityNameEntity> entities)
+    public IEnumerable<$EntityNameModel> ToModel(IEnumerable<$EntityNameEntity> entities, TimeZoneInfo? timezone)
     {
         return entities.Select(ToModel);
     }
 
-    public $EntityNameModel ToModel($EntityNameEntity entity)
+    public $EntityNameModel ToModel($EntityNameEntity entity, TimeZoneInfo? timezone)
     {
         var model = new $EntityNameModel
         {
@@ -41,12 +41,12 @@ $AssignEntityToModel
         return model;
     }
 
-    public IEnumerable<$EntityNameMatch> ToMatch(IEnumerable<$EntityNameEntity> entities)
+    public IEnumerable<$EntityNameMatch> ToMatch(IEnumerable<$EntityNameEntity> entities, TimeZoneInfo? timezone)
     {
-        return entities.Select(ToMatch);
+        return entities.Select(x => ToMatch(x, timezone));
     }
 
-    public $EntityNameMatch ToMatch($EntityNameEntity entity)
+    public $EntityNameMatch ToMatch($EntityNameEntity entity, TimeZoneInfo? timezone)
     {
         var match = new $EntityNameMatch
         {

@@ -7,9 +7,9 @@ CREATE TABLE metadata.TEntity (
   StorageTableRename VARCHAR(40) NULL,
   StorageKey VARCHAR(80) NOT NULL,
 
-  ComponentType VARCHAR(20) NOT NULL,
-  ComponentName VARCHAR(30) NOT NULL,
-  ComponentFeature VARCHAR(40) NOT NULL,
+  SubsystemType VARCHAR(20) NOT NULL,
+  SubsystemName VARCHAR(30) NOT NULL,
+  SubsystemComponent VARCHAR(40) NOT NULL,
 
   EntityName VARCHAR(50) NOT NULL,
 

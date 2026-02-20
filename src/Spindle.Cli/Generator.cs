@@ -163,7 +163,7 @@ public class Generator
         foreach (var entity in _entities)
         {
             var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
-            var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, "Data", storageName);
+            var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, "Data", storageName);
             GenerateReader(entity, folder);
         }
     }
@@ -192,7 +192,11 @@ public class Generator
         {
             var columnName = ConvertSnakeCaseToPascalCase(primaryKey[i]);
 
-            assignEntityToMatch.Append("                " + columnName + " = entity." + columnName);
+            var entityColumnName = columnName;
+
+            var modelColumnName = AbbreviateIdentifierSuffix(columnName);
+
+            assignEntityToMatch.Append("                " + modelColumnName + " = entity." + entityColumnName);
 
             if (i < primaryKey.Length - 1)
                 assignEntityToMatch.Append(",");
@@ -202,7 +206,7 @@ public class Generator
 
         text = text.Replace("$AssignEntityToMatch", assignEntityToMatch.ToString());
         text = text.Replace("$ContractNamespace", GetNamespace(_settings.PlatformName, "Contract"));
-        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$StorageStructure", storageStructure);
         text = text.Replace("$StorageName", storageName);
         text = text.Replace("$EntityName", entity.EntityName);
@@ -223,7 +227,7 @@ public class Generator
         foreach (var entity in _entities)
         {
             var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
-            var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, "Data", storageName);
+            var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, "Data", storageName);
             GenerateWriter(entity, folder);
         }
     }
@@ -244,7 +248,7 @@ public class Generator
         var properties = PrimaryKeyPropertyNames(entity);
 
         text = text.Replace("$ContractNamespace", GetNamespace(_settings.PlatformName, "Contract"));
-        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$StorageStructure", storageStructure);
         text = text.Replace("$StorageName", storageName);
         text = text.Replace("$EntityName", entity.EntityName);
@@ -264,7 +268,7 @@ public class Generator
         foreach (var entity in _entities)
         {
             var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
-            var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, "Data", storageName);
+            var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, "Data", storageName);
             GenerateService(entity, folder);
         }
     }
@@ -284,7 +288,7 @@ public class Generator
         var argumentsForModify = PrimaryKeyMethodArguments(entity, false, "modify");
 
         text = text.Replace("$ContractNamespace", GetNamespace(_settings.PlatformName, "Contract"));
-        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$StorageStructure", entity.StorageStructure);
         text = text.Replace("$StorageName", storageName);
         text = text.Replace("$EntityName", entity.EntityName);
@@ -306,7 +310,7 @@ public class Generator
         foreach (var entity in _entities)
         {
             var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
-            var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, "Data", storageName);
+            var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, "Data", storageName);
             GenerateAdapter(entity, folder);
         }
     }
@@ -340,7 +344,11 @@ public class Generator
 
             var columnName = ConvertSnakeCaseToPascalCase(column.ColumnName);
 
-            assignModifyToEntity.AppendLine("        entity." + columnName + " = modify." + columnName + ";");
+            var entityColumnName = columnName;
+
+            var modelColumnName = AbbreviateIdentifierSuffix(columnName);
+
+            assignModifyToEntity.AppendLine("        entity." + entityColumnName + " = modify." + modelColumnName + ";");
         }
 
         var assignCreateToEntity = new StringBuilder();
@@ -351,7 +359,11 @@ public class Generator
 
             var columnName = ConvertSnakeCaseToPascalCase(column.ColumnName);
 
-            assignCreateToEntity.Append("            " + columnName + " = create." + columnName);
+            var entityColumnName = columnName;
+
+            var modelColumnName = AbbreviateIdentifierSuffix(columnName);
+
+            assignCreateToEntity.Append("            " + entityColumnName + " = create." + modelColumnName);
 
             if (i < columns.Count - 1)
                 assignCreateToEntity.AppendLine(",");
@@ -365,7 +377,11 @@ public class Generator
 
             var columnName = ConvertSnakeCaseToPascalCase(column.ColumnName);
 
-            assignEntityToModel.Append("            " + columnName + " = entity." + columnName);
+            var entityColumnName = columnName;
+
+            var modelColumnName = AbbreviateIdentifierSuffix(columnName);
+
+            assignEntityToModel.Append("            " + modelColumnName + " = entity." + entityColumnName);
 
             if (i < columns.Count - 1)
                 assignEntityToModel.AppendLine(",");
@@ -377,7 +393,11 @@ public class Generator
         {
             var columnName = ConvertSnakeCaseToPascalCase(primaryKey[i]);
 
-            assignEntityToMatch.Append("            " + columnName + " = entity." + columnName);
+            var entityColumnName = columnName;
+
+            var modelColumnName = AbbreviateIdentifierSuffix(columnName);
+
+            assignEntityToMatch.Append("            " + modelColumnName + " = entity." + entityColumnName);
 
             if (i < primaryKey.Length - 1)
                 assignEntityToMatch.Append(",");
@@ -386,7 +406,7 @@ public class Generator
         }
 
         text = text.Replace("$ContractNamespace", GetNamespace(_settings.PlatformName, "Contract"));
-        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$StorageStructure", entity.StorageStructure);
         text = text.Replace("$StorageName", storageName);
         text = text.Replace("$EntityName", entity.EntityName);
@@ -412,7 +432,7 @@ public class Generator
 
         foreach (var entity in _entities)
         {
-            var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart);
+            var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent);
             GenerateController(entity, folder);
         }
     }
@@ -440,9 +460,9 @@ public class Generator
 
         text = text
             .Replace("$ApiNamespace", GetNamespace(_settings.PlatformName, "Api"))
-            .Replace("$ComponentName", entity.ComponentName)
+            .Replace("$SubsystemName", entity.SubsystemName)
             .Replace("$ContractNamespace", GetNamespace(_settings.PlatformName, "Contract"))
-            .Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName))
+            .Replace("$ServiceNamespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName))
             .Replace("$EntityNamePluralVariable", Inflector.Pluralize(variable))
             .Replace("$EntityNamePlural", Inflector.Pluralize(entity.EntityName))
             .Replace("$EntityNameVariable", variable)
@@ -471,13 +491,13 @@ public class Generator
         foreach (var entity in _entities)
         {
             var output = Path.Combine(_output, "Contract");
-            var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, entity.EntityName);
+            var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, entity.EntityName);
             GenerateClient(entity, folder);
 
             if (generateUnitTests)
             {
                 output = Path.Combine(_output, "Contract.Test");
-                folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart);
+                folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent);
                 GenerateClientTest(entity, folder);
             }
         }
@@ -589,7 +609,7 @@ public class Generator
             {
                 var output = Path.Combine(_output, "Service");
                 var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
-                var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, "Data", storageName);
+                var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, "Data", storageName);
                 GenerateEntity(entity, folder);
                 GenerateEntityConfiguration(entity, folder);
             }
@@ -598,7 +618,7 @@ public class Generator
             {
                 var output = Path.Combine(_output, "Service.EF6");
                 var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
-                var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, "Data", storageName);
+                var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, "Data", storageName);
                 GenerateEntity6(entity, folder);
                 GenerateEntity6Configuration(entity, folder);
             }
@@ -611,11 +631,11 @@ public class Generator
 
         var text = template;
 
-        var declarations = PropertyDeclarations(entity, PropertyType.All, false, true, 1);
+        var declarations = PropertyDeclarations(entity, PropertyType.All, false, true, 1, false, false);
 
         var className = entity.EntityName + "Entity";
 
-        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$ClassName", className);
         text = text.Replace("$ClassProperties", declarations);
 
@@ -635,7 +655,7 @@ public class Generator
             keys[i] = ConvertSnakeCaseToPascalCase(keys[i]);
         var pkColumnNames = "x." + string.Join(", x.", keys);
 
-        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$EntityName", entity.EntityName);
         text = text.Replace("$StorageSchema", entity.StorageSchema);
         text = text.Replace("$StorageTable", entity.StorageTable);
@@ -658,7 +678,7 @@ public class Generator
             foreach (var layer in layers)
             {
                 var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
-                var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, "Data", storageName);
+                var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, "Data", storageName);
                 GenerateValidator(entity, folder);
             }
         }
@@ -674,7 +694,7 @@ public class Generator
 
         var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
 
-        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$ContractNamespace", GetNamespace(_settings.PlatformName, "Contract"));
         text = text.Replace("$StorageName", storageName);
         text = text.Replace("$StorageName", storageName);
@@ -703,7 +723,7 @@ public class Generator
 
                 foreach (var layer in layers)
                 {
-                    var folder = GeneratePath(output, entity.ComponentName, entity.ComponentPart, layer);
+                    var folder = GeneratePath(output, entity.SubsystemName, entity.SubsystemComponent, layer);
 
                     GenerateReadme(entity, layer, folder);
                 }
@@ -745,10 +765,10 @@ public class Generator
 
                     var collection = endpoint.GetCollectionPath();
 
-                    if (endpoint.ComponentType == "Plugin")
+                    if (endpoint.SubsystemType == "Plugin")
                     {
-                        var a = endpoint.ComponentName.ToLower();
-                        var b = endpoint.ComponentPart.ToLower();
+                        var a = endpoint.SubsystemName.ToLower();
+                        var b = endpoint.SubsystemComponent.ToLower();
                         var c = endpoint.CollectionSlug;
 
                         if (c.StartsWith($"{b}-"))
@@ -829,10 +849,10 @@ public class Generator
 
         var text = template;
 
-        text = text.Replace("$ComponentPart", entity.ComponentPart);
+        text = text.Replace("$SubsystemComponent", entity.SubsystemComponent);
         text = text.Replace("$ComponentLayer", layer);
-        text = text.Replace("$ComponentName", entity.ComponentName);
-        text = text.Replace("$ComponentType", entity.ComponentType.ToLower());
+        text = text.Replace("$SubsystemName", entity.SubsystemName);
+        text = text.Replace("$SubsystemType", entity.SubsystemType.ToLower());
 
         text = text.Replace("$EntitySummary", GetEntitySummary(entity, layer));
 
@@ -866,8 +886,8 @@ public class Generator
         var text = new StringBuilder();
 
         var tableGroups = _tables
-            .OrderBy(x => x.ComponentType + ": " + x.ComponentName)
-            .GroupBy(x => x.ComponentType + ": " + x.ComponentName);
+            .OrderBy(x => x.SubsystemType + ": " + x.SubsystemName)
+            .GroupBy(x => x.SubsystemType + ": " + x.SubsystemName);
 
         foreach (var tableGroup in tableGroups)
         {
@@ -900,8 +920,8 @@ public class Generator
         var text = new StringBuilder();
 
         var tableGroups = _tables
-            .OrderBy(x => x.ComponentType + ": " + x.ComponentName)
-            .GroupBy(x => x.ComponentType + ": " + x.ComponentName);
+            .OrderBy(x => x.SubsystemType + ": " + x.SubsystemName)
+            .GroupBy(x => x.SubsystemType + ": " + x.SubsystemName);
 
         foreach (var tableGroup in tableGroups)
         {
@@ -931,7 +951,7 @@ public class Generator
     {
         var text = new StringBuilder();
 
-        var components = _tables.Select(x => x.ComponentName).Distinct().OrderBy(x => x);
+        var components = _tables.Select(x => x.SubsystemName).Distinct().OrderBy(x => x);
 
         foreach (var component in components)
         {
@@ -943,13 +963,13 @@ public class Generator
 
     private string GetEntitySummary(Entity entity, string layer)
     {
-        var futureSchemaChanges = _entities.GetFutureSchemaChanges(entity.ComponentName, entity.ComponentPart);
+        var futureSchemaChanges = _entities.GetFutureSchemaChanges(entity.SubsystemName, entity.SubsystemComponent);
 
         var text = new StringBuilder();
 
-        var component = entity.ComponentName;
+        var component = entity.SubsystemName;
 
-        var part = entity.ComponentPart;
+        var part = entity.SubsystemComponent;
 
         if (layer == "Data")
         {
@@ -1084,6 +1104,14 @@ public class Generator
         return CreateFolder(path);
     }
 
+    private string AbbreviateIdentifierSuffix(string input)
+    {
+        if (input.Contains("Identifier"))
+            input = input.Replace("Identifier", "Id");
+
+        return input;
+    }
+
     private string ConvertSnakeCaseToPascalCase(string input)
     {
         // If there are no underscores then assume the input is already in PascalCase.
@@ -1112,7 +1140,7 @@ public class Generator
 
         var className = entity.GetStorageStructurePrefix() + entity.EntityName + "Entity";
 
-        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$ClassName", className);
         text = text.Replace("$ClassProperties", declarations);
 
@@ -1134,7 +1162,7 @@ public class Generator
 
         var storageName = entity.GetStorageStructurePrefix() + entity.EntityName;
 
-        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.ComponentName));
+        text = text.Replace("$Namespace", GetNamespace(_settings.PlatformName, "Service", entity.SubsystemName));
         text = text.Replace("$StorageName", storageName);
 
         text = text.Replace("$StorageSchema", entity.StorageSchema);
@@ -1152,10 +1180,10 @@ public class Generator
 
     public string SwaggerHeading(Entity entity)
     {
-        var heading = entity.ComponentName;
+        var heading = entity.SubsystemName;
 
-        if (entity.ComponentPart != "-")
-            heading += " API: " + entity.ComponentPart;
+        if (entity.SubsystemComponent != "-")
+            heading += " API: " + entity.SubsystemComponent;
 
         return $"\"{heading}\"";
     }
@@ -1463,7 +1491,7 @@ public class Generator
         return pkPropertyValuesForGet;
     }
 
-    public string PropertyDeclarations(Entity entity, PropertyType type, bool allowNull = false, bool isCore = false, int tabs = 2, bool removeModifier = false)
+    public string PropertyDeclarations(Entity entity, PropertyType type, bool allowNull = false, bool isCore = false, int tabs = 2, bool removeModifier = false, bool abbreviateIdentifierSuffix = false)
     {
         var indent = new string(' ', tabs * 4);
 
@@ -1504,7 +1532,17 @@ public class Generator
             if (declarations != string.Empty && lasttype != typeName)
                 declarations += "\r\n";
 
-            declarations += indent + (!removeModifier ? "public " : "") + datatype + " " + ConvertSnakeCaseToPascalCase(column.ColumnName) + " { get; set; }";
+            var columnName = ConvertSnakeCaseToPascalCase(column.ColumnName);
+
+            var modelColumnName = abbreviateIdentifierSuffix
+                ? AbbreviateIdentifierSuffix(columnName)
+                : columnName;
+
+            declarations += indent + (!removeModifier ? "public " : "")
+                + datatype
+                + " "
+                + modelColumnName
+                + " { get; set; }";
 
             if (isCore && (isString || isByteArray) && !datatype.EndsWith("?"))
                 declarations += " = null!;";

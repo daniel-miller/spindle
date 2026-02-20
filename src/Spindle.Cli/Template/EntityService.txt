@@ -8,25 +8,23 @@ namespace $ServiceNamespace;
 public class $EntityNameService : IEntityService
 {
     private readonly $EntityNameReader _reader;
-    private readonly $EntityNameWriter _writer;
     private readonly $EntityNameAdapter _adapter = new $EntityNameAdapter();
 
-    public $EntityNameService($EntityNameReader reader, $EntityNameWriter writer)
+    public $EntityNameService($EntityNameReader reader)
     {
         _reader = reader;
-        _writer = writer;
     }
 
-    public async Task<bool> AssertAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
+    public async Task<bool> AssertAsync($PrimaryKeyMethodParameters, Guid organization, CancellationToken cancellation = default)
     {
-        return await _reader.AssertAsync($PrimaryKeyMethodArguments, cancellation);
+        return await _reader.AssertAsync($PrimaryKeyMethodArguments, organization, cancellation);
     }
 
-    public async Task<IEnumerable<$EntityNameModel>> CollectAsync(I$EntityNameCriteria criteria, CancellationToken cancellation = default)
+    public async Task<IEnumerable<$EntityNameModel>> CollectAsync(I$EntityNameCriteria criteria, TimeZoneInfo? timeZone, CancellationToken cancellation = default)
     {
         var entities = await _reader.CollectAsync(criteria, cancellation);
 
-        return _adapter.ToModel(entities);
+        return _adapter.ToModel(entities, timeZone);
     }
 
     public async Task<int> CountAsync(I$EntityNameCriteria criteria, CancellationToken cancellation = default)
@@ -46,11 +44,11 @@ public class $EntityNameService : IEntityService
         return await _writer.DeleteAsync($PrimaryKeyMethodArguments, cancellation);
     }
 
-    public async IAsyncEnumerable<$EntityNameModel> DownloadAsync(I$EntityNameCriteria criteria, [EnumeratorCancellation] CancellationToken cancellation)
+    public async IAsyncEnumerable<$EntityNameModel> DownloadAsync(I$EntityNameCriteria criteria, TimeZoneInfo? timeZone, [EnumeratorCancellation] CancellationToken cancellation)
     {
         await foreach (var entity in _reader.DownloadAsync(criteria, cancellation))
         {
-            yield return _adapter.ToModel(entity);
+            yield return _adapter.ToModel(entity, timeZone);
         }
     }
 
@@ -66,11 +64,11 @@ public class $EntityNameService : IEntityService
         return await _writer.ModifyAsync(entity, cancellation);
     }
 
-    public async Task<$EntityNameModel?> RetrieveAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
+    public async Task<$EntityNameModel?> RetrieveAsync($PrimaryKeyMethodParameters, TimeZoneInfo? timeZone, CancellationToken cancellation = default)
     {
         var entity = await _reader.RetrieveAsync($PrimaryKeyMethodArguments, cancellation);
 
-        return entity != null ? _adapter.ToModel(entity) : null;
+        return entity != null ? _adapter.ToModel(entity, timeZone) : null;
     }
 
     public async Task<IEnumerable<$EntityNameMatch>> SearchAsync(I$EntityNameCriteria criteria, CancellationToken cancellation = default)

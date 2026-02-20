@@ -23,7 +23,7 @@ public class SqlServerDatabase : IDatabase
     public async Task<EntityList> GetEntitiesAsync(string? storageStructure = null)
     {
         const string baseQuery = "SELECT * FROM metadata.TEntity";
-        const string orderBy = "ORDER BY ComponentName, ComponentPart, EntityName";
+        const string orderBy = "ORDER BY SubsystemName, SubsystemComponent, EntityName";
 
         var whereClause = string.IsNullOrEmpty(storageStructure)
             ? string.Empty
@@ -184,9 +184,9 @@ public class SqlServerDatabase : IDatabase
             StorageTable = reader["StorageTable"] as string ?? string.Empty,
             StorageKey = reader["StorageKey"] as string ?? string.Empty,
             StorageTableRename = reader["StorageTableRename"] as string,
-            ComponentType = reader["ComponentType"] as string ?? string.Empty,
-            ComponentName = reader["ComponentName"] as string ?? string.Empty,
-            ComponentPart = reader["ComponentPart"] as string ?? string.Empty,
+            SubsystemType = reader["SubsystemType"] as string ?? string.Empty,
+            SubsystemName = reader["SubsystemName"] as string ?? string.Empty,
+            SubsystemComponent = reader["SubsystemComponent"] as string ?? string.Empty,
             EntityName = reader["EntityName"] as string ?? string.Empty,
             CollectionSlug = reader["CollectionSlug"] as string ?? string.Empty,
             CollectionKey = reader["CollectionKey"] as string ?? string.Empty

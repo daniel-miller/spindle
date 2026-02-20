@@ -1,5 +1,5 @@
-﻿# $ComponentName / $ComponentPart / $ComponentLayer
+﻿# $SubsystemName / $SubsystemComponent / $ComponentLayer
 
-$ComponentPart is part of the $ComponentName subsystem.
+$SubsystemComponent is part of the $SubsystemName subsystem.
   
 $EntitySummary

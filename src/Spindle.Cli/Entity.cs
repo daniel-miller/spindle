@@ -9,9 +9,9 @@ public class Entity
     private const string DefaultValue = "-";
     
     // Component properties
-    public string ComponentType { get; set; } = string.Empty;
-    public string ComponentName { get; set; } = string.Empty;
-    public string ComponentPart { get; set; } = string.Empty;
+    public string SubsystemType { get; set; } = string.Empty;
+    public string SubsystemName { get; set; } = string.Empty;
+    public string SubsystemComponent { get; set; } = string.Empty;
 
     // Entity properties
     public string EntityName { get; set; } = string.Empty;
@@ -54,12 +54,12 @@ public class Entity
     /// <returns>The formatted collection path.</returns>
     public string GetCollectionPath()
     {
-        if (string.IsNullOrWhiteSpace(ComponentName) || string.IsNullOrWhiteSpace(CollectionSlug))
+        if (string.IsNullOrWhiteSpace(SubsystemName) || string.IsNullOrWhiteSpace(CollectionSlug))
             return string.Empty;
 
-        var component = ComponentName.ToLowerInvariant();
+        var component = SubsystemName.ToLowerInvariant();
         
-        if (ComponentType.Equals("Plugin", StringComparison.OrdinalIgnoreCase))
+        if (SubsystemType.Equals("Plugin", StringComparison.OrdinalIgnoreCase))
         {
             return BuildPluginCollectionPath(component);
         }
@@ -73,11 +73,11 @@ public class Entity
     /// <returns>The formatted namespace string.</returns>
     public string GetNamespace()
     {
-        var namespaceParts = new List<string> { ComponentName };
+        var namespaceParts = new List<string> { SubsystemName };
 
-        if (!string.IsNullOrWhiteSpace(ComponentPart) && ComponentPart != DefaultValue)
+        if (!string.IsNullOrWhiteSpace(SubsystemComponent) && SubsystemComponent != DefaultValue)
         {
-            namespaceParts.Add(ComponentPart);
+            namespaceParts.Add(SubsystemComponent);
         }
 
         if (!string.IsNullOrWhiteSpace(EntityName) && EntityName != DefaultValue)
@@ -95,10 +95,10 @@ public class Entity
     /// <returns>The formatted plugin collection path.</returns>
     private string BuildPluginCollectionPath(string component)
     {
-        if (string.IsNullOrWhiteSpace(ComponentPart))
+        if (string.IsNullOrWhiteSpace(SubsystemComponent))
             return $"{component}/{CollectionSlug}";
 
-        var part = ComponentPart.ToLowerInvariant();
+        var part = SubsystemComponent.ToLowerInvariant();
         var slug = CollectionSlug;
 
         // Remove redundant part prefix from slug if present

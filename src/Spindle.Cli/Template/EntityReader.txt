@@ -14,21 +14,20 @@ public class $EntityNameReader : IEntityReader
 
     private readonly IDbContextFactory<$StorageStructureDbContext> _context;
 
-    private readonly IShiftIdentityService _auth;
-
-    public $EntityNameReader(IDbContextFactory<$StorageStructureDbContext> context, IShiftIdentityService auth)
+    public $EntityNameReader(IDbContextFactory<$StorageStructureDbContext> context)
     {
         _context = context;
-        _auth = auth;
     }
 
-    public Task<bool> AssertAsync($PrimaryKeyMethodParameters, CancellationToken cancellation = default)
+    public Task<bool> AssertAsync($PrimaryKeyMethodParameters, Guid? organization, CancellationToken cancellation = default)
     {
         return ExecuteAsync(db =>
         {
             var query = BuildQueryable(db);
             
-            return query.AnyAsync(x => $PrimaryKeyEqualityExpression, cancellation);
+            return query.AnyAsync(x => $PrimaryKeyEqualityExpression
+                    && (organization == null || organization == x.OrganizationIdentifier), 
+                cancellation);
 
         }, cancellation);
     }
@@ -106,11 +105,8 @@ public class $EntityNameReader : IEntityReader
     /// </remarks>
     private IQueryable<$EntityNameEntity> BuildQueryable(TableDbContext db)
     {
-        ValidateOrganizationContext();
-
         var query = db.$EntityName
-            .AsNoTracking()
-            .Where(x => x.OrganizationIdentifier == _auth.OrganizationId);
+            .AsNoTracking();
 
         return query;
     }
@@ -143,11 +139,5 @@ $AssignEntityToMatch
             .ToListAsync(cancellation);
 
         return matches;
-    }
-
-    private void ValidateOrganizationContext()
-    {
-        if (_auth.OrganizationId == Guid.Empty)
-            throw new InvalidOperationException("Organization context is required");
     }
 }

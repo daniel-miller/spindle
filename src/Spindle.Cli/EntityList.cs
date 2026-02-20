@@ -15,7 +15,7 @@ public class EntityList : List<Entity>
     /// </summary>
     public string[] GetComponents()
     {
-        return this.Select(x => x.ComponentName)
+        return this.Select(x => x.SubsystemName)
             .Distinct()
             .OrderBy(x => x)
             .ToArray();
@@ -30,8 +30,8 @@ public class EntityList : List<Entity>
         if (string.IsNullOrWhiteSpace(component))
             return Array.Empty<string>();
 
-        return this.Where(x => x.ComponentName == component)
-            .Select(x => x.ComponentPart)
+        return this.Where(x => x.SubsystemName == component)
+            .Select(x => x.SubsystemComponent)
             .Distinct()
             .OrderBy(x => x)
             .ToArray();
@@ -47,7 +47,7 @@ public class EntityList : List<Entity>
         if (string.IsNullOrWhiteSpace(component) || string.IsNullOrWhiteSpace(feature))
             return Array.Empty<string>();
 
-        return this.Where(x => x.ComponentName == component && x.ComponentPart == feature)
+        return this.Where(x => x.SubsystemName == component && x.SubsystemComponent == feature)
             .Select(x => x.EntityName)
             .Distinct()
             .OrderBy(x => x)
@@ -64,7 +64,7 @@ public class EntityList : List<Entity>
         if (string.IsNullOrWhiteSpace(component) || string.IsNullOrWhiteSpace(feature))
             return Array.Empty<string>();
 
-        var features = this.Where(x => x.ComponentName == component && x.ComponentPart == feature)
+        var features = this.Where(x => x.SubsystemName == component && x.SubsystemComponent == feature)
             .OrderBy(x => x.StorageTable)
             .ThenBy(x => x.StorageSchema);
 
@@ -110,8 +110,8 @@ public class EntityList : List<Entity>
             throw new ArgumentException("Entity name cannot be null or empty.", nameof(entity));
 
         var entities = this.Where(x => 
-            x.ComponentName == component && 
-            x.ComponentPart == feature && 
+            x.SubsystemName == component && 
+            x.SubsystemComponent == feature && 
             x.EntityName == entity)
             .ToList();
 
@@ -143,8 +143,8 @@ public class EntityList : List<Entity>
         }
 
         var entities = this.Where(x => 
-            x.ComponentName == component && 
-            x.ComponentPart == feature && 
+            x.SubsystemName == component && 
+            x.SubsystemComponent == feature && 
             x.EntityName == entity)
             .ToList();
 
